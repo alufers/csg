@@ -20,7 +20,7 @@ func (p plane) flipped() plane {
 }
 
 /*
-splitPolygon splits the poligon into lists which are returned in the same order as the arguments.
+splitPolygon splits the polygon into lists which are returned in the same order as the arguments.
 */
 func (p plane) splitPolygon(poly polygon, coplanarFront, coplanarBack, front, back []polygon) ([]polygon, []polygon, []polygon, []polygon) {
 	const (

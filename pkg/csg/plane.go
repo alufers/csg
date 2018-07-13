@@ -22,7 +22,7 @@ func (p plane) flipped() plane {
 /*
 splitPolygon splits the polygon into lists which are returned in the same order as the arguments.
 */
-func (p plane) splitPolygon(poly polygon, coplanarFront, coplanarBack, front, back []polygon) ([]polygon, []polygon, []polygon, []polygon) {
+func (p plane) splitPolygon(poly polygon, coplanarFront, coplanarBack, front, back *[]polygon) {
 	const (
 		coplanarType = 0
 		frontType    = 1
@@ -49,14 +49,14 @@ func (p plane) splitPolygon(poly polygon, coplanarFront, coplanarBack, front, ba
 	switch polygonType {
 	case coplanarType:
 		if p.normal.dot(poly.plane.normal) > 0 {
-			coplanarFront = append(coplanarFront, poly)
+			*coplanarFront = append(*coplanarFront, poly)
 		} else {
-			coplanarBack = append(coplanarBack, poly)
+			*coplanarBack = append(*coplanarBack, poly)
 		}
 	case frontType:
-		front = append(front, poly)
+		*front = append(*front, poly)
 	case backType:
-		back = append(back, poly)
+		*back = append(*back, poly)
 	case spanningType:
 		var f, b []vertex
 		for i, vi := range poly.vertices {
@@ -78,11 +78,10 @@ func (p plane) splitPolygon(poly polygon, coplanarFront, coplanarBack, front, ba
 			}
 		}
 		if len(f) >= 3 {
-			front = append(front, newPolygon(f, poly.shared))
+			*front = append(*front, newPolygon(f, poly.shared))
 		}
 		if len(b) >= 3 {
-			back = append(back, newPolygon(b, poly.shared))
+			*back = append(*back, newPolygon(b, poly.shared))
 		}
 	}
-	return coplanarFront, coplanarBack, front, back
 }

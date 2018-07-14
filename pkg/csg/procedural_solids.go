@@ -20,7 +20,7 @@ func makeSphere(center vector3, radius float64) *csgSolid {
 			math.Sin(theta) * math.Sin(phi),
 		}
 		vertices = append(vertices, vertex{
-			pos:    dir.times(radius),
+			pos:    dir.times(radius).plus(center),
 			normal: dir,
 		})
 

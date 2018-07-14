@@ -91,7 +91,8 @@ func (cn *csgNode) build(polygons []polygon) {
 		return
 	}
 	if cn.plane == nil {
-		cn.plane = &polygons[0].plane
+		p := polygons[0].plane
+		cn.plane = &p
 	}
 	var front, back []polygon
 	for _, poly := range polygons {

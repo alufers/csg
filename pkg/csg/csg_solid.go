@@ -1,5 +1,10 @@
 package csg
 
+import (
+	"fmt"
+	"io"
+)
+
 type csgSolid struct {
 	polygons []polygon
 }
@@ -54,4 +59,24 @@ func (cs *csgSolid) intersect(other *csgSolid) *csgSolid {
 	a.build(b.allPolygons())
 	a.invert()
 	return newCsgSolid(a.allPolygons())
+}
+
+func (cs *csgSolid) toObj(out io.Writer) {
+	var polyOffsets []int
+	var i int
+	for _, poly := range cs.polygons {
+		polyOffsets = append(polyOffsets, i)
+		for _, v := range poly.vertices {
+			i++
+			fmt.Fprintf(out, "v %v %v %v\nvn %v %v %v\n", v.pos.X, v.pos.Y, v.pos.Z, v.normal.X, v.normal.Y, v.normal.Z)
+		}
+	}
+
+	for polyIndex, of := range polyOffsets {
+		fmt.Fprintf(out, "f ")
+		for i := of; i < of+len(cs.polygons[polyIndex].vertices); i++ {
+			fmt.Fprintf(out, "%v//%v ", i+1, i+1)
+		}
+		fmt.Fprintf(out, "\n")
+	}
 }

@@ -42,3 +42,37 @@ func makeSphere(center vector3, radius float64) *csgSolid {
 	}
 	return newCsgSolid(polygons)
 }
+
+var cubeData = [][]int{
+	{0, 4, 6, 2},
+	{1, 3, 7, 5},
+	{0, 1, 5, 4},
+	{2, 6, 7, 3},
+	{0, 2, 3, 1},
+	{4, 5, 7, 6},
+}
+
+var cubeNormals = []vector3{
+	{-1, 0, 0},
+	{+1, 0, 0},
+	{0, -1, 0},
+	{0, +1, 0},
+	{0, 0, -1},
+	{0, 0, +1},
+}
+
+func makeCube(center vector3, size vector3) *csgSolid {
+	var polygons []polygon
+	for i, data := range cubeData {
+		var vertices []vertex
+		for _, d := range data {
+			vertices = append(vertices, vertex{vector3{
+				center.X + size.X*(1*math.Min(1, float64(d&1))-0.5),
+				center.Y + size.Y*(1*math.Min(1, float64(d&2))-0.5),
+				center.Z + size.Z*(1*math.Min(1, float64(d&4))-0.5),
+			}, cubeNormals[i]})
+		}
+		polygons = append(polygons, newPolygon(vertices, nil))
+	}
+	return newCsgSolid(polygons)
+}

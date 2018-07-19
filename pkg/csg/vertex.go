@@ -8,7 +8,7 @@ type vertex struct {
 func (v vertex) flipped() vertex {
 	return vertex{
 		pos:    v.pos,
-		normal: v.normal,
+		normal: v.normal.negated(),
 	}
 }
 

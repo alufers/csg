@@ -1,5 +1,10 @@
 package csg
 
+import (
+	"fmt"
+	"strings"
+)
+
 type csgNode struct {
 	front    *csgNode
 	back     *csgNode
@@ -44,8 +49,8 @@ func (cn *csgNode) invert() {
 }
 
 func (cn *csgNode) allPolygons() []polygon {
-	var p []polygon
-	p = append(p, cn.polygons...)
+	p := make([]polygon, len(cn.polygons))
+	copy(p, cn.polygons)
 	if cn.front != nil {
 		p = append(p, cn.front.allPolygons()...)
 	}
@@ -55,6 +60,7 @@ func (cn *csgNode) allPolygons() []polygon {
 	return p
 }
 
+// to chyba nie dziala, (albo clipTo)
 func (cn *csgNode) clipPolygons(polygons []polygon) []polygon {
 	if cn.plane == nil {
 		polygonsCopy := make([]polygon, len(polygons))
@@ -110,4 +116,27 @@ func (cn *csgNode) build(polygons []polygon) {
 		}
 		cn.back.build(back)
 	}
+}
+
+func (cn *csgNode) String() string {
+	val := ""
+	val += fmt.Sprintln("-| CSG NODE")
+	val += fmt.Sprintf("   Plane: %+v\n", cn.plane)
+	val += fmt.Sprintf("   Polygons: %+v\n", cn.polygons)
+	printNested := func(x *csgNode) {
+		if x != nil {
+			next := strings.Split(x.String(), "\n")
+			for _, s := range next {
+				val += fmt.Sprintf("    %v\n", s)
+			}
+
+		} else {
+			val += fmt.Sprintln("    nil")
+		}
+	}
+	val += fmt.Sprintf("   Front:\n")
+	printNested(cn.front)
+	val += fmt.Sprintf("   Back:\n")
+	printNested(cn.back)
+	return val
 }
